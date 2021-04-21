@@ -1,22 +1,65 @@
 import { GetStaticProps } from "next";
+import Image from "next/image";
 import { format, parseISO } from "date-fns";
 import ptBR from "date-fns/locale/pt-BR";
 
 import { api } from "../services/api";
 import { convertDurationToTimeString } from "../utils/convertDurationToTimeString";
 
+import styled from "./home.module.scss";
+
 type Episode = {
   id: string;
   title: string;
+  thumbnail: string;
   members: string;
+  publishedAt: string;
+  duration: number;
+  durationAsString: string;
+  description: string;
+  url: string;
 };
 
 type HomeProps = {
-  episodes: Episode[];
+  latestEpisodes: Episode[];
+  allEpisodes: Episode[];
 };
 
-export default function Home(props: HomeProps) {
-  return <h1>{JSON.stringify(props)}</h1>;
+export default function Home({ latestEpisodes, allEpisodes }: HomeProps) {
+  return (
+    <div className={styled.homepage}>
+      <section className={styled.latestEpisodes}>
+        <h2>Útimos Lançamentos</h2>
+
+        <ul>
+          {latestEpisodes.map((episode) => (
+            <li key={episode.id}>
+              <Image
+                width={192}
+                height={192}
+                src={episode.thumbnail}
+                alt={episode.title}
+                objectFit="cover"
+              />
+
+              <div className={styled.episodeDetails}>
+                <a href="">{episode.title}</a>
+                <p>{episode.members}</p>
+                <span>{episode.publishedAt}</span>
+                <span>{episode.durationAsString}</span>
+              </div>
+
+              <button type="button">
+                <img src="/play-green.svg" alt="Tocar episódio" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className={styled.allEpisodes}></section>
+    </div>
+  );
 }
 
 export const getStaticProps: GetStaticProps = async () => {
@@ -44,9 +87,13 @@ export const getStaticProps: GetStaticProps = async () => {
     url: episode.file.url,
   }));
 
+  const latestEpisodes = episodes.slice(0, 2);
+  const allEpisodes = episodes.slice(2, episodes.length);
+
   return {
     props: {
-      episodes,
+      latestEpisodes,
+      allEpisodes,
     },
     revalidate: 60 * 60 * 8,
   };
