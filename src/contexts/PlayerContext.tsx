@@ -11,7 +11,10 @@ type Episode = {
 type PlayerContextData = {
   episodesList: Episode[];
   currentEpisodeIndex: number;
+  isPlaying: boolean;
   play: (episode) => void;
+  togglePlay: () => void;
+  setPlayingState: (state: boolean) => void;
 };
 
 interface PlayerProviderProps {
@@ -23,10 +26,20 @@ const PlayerContext = createContext({} as PlayerContextData);
 export function PlayerProvider({ children }: PlayerProviderProps) {
   const [episodesList, setEpisodesList] = useState<Episode[]>([]);
   const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   function play(episode) {
     setEpisodesList([episode]);
     setCurrentEpisodeIndex(0);
+    setIsPlaying(true);
+  }
+
+  function togglePlay() {
+    setIsPlaying(!isPlaying);
+  }
+
+  function setPlayingState(state) {
+    setIsPlaying(state);
   }
 
   return (
@@ -34,7 +47,10 @@ export function PlayerProvider({ children }: PlayerProviderProps) {
       value={{
         episodesList,
         currentEpisodeIndex,
+        isPlaying,
         play,
+        togglePlay,
+        setPlayingState,
       }}
     >
       {children}

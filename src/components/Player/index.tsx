@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Slider from "rc-slider";
 
@@ -7,7 +8,25 @@ import "rc-slider/assets/index.css";
 import styled from "./styles.module.scss";
 
 export function Player() {
-  const { episodesList, currentEpisodeIndex } = usePlayer();
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  const {
+    episodesList,
+    currentEpisodeIndex,
+    isPlaying,
+    togglePlay,
+    setPlayingState,
+  } = usePlayer();
+
+  useEffect(() => {
+    if (!audioRef.current) return;
+
+    if (isPlaying) {
+      audioRef.current.play();
+    } else {
+      audioRef.current.pause();
+    }
+  }, [isPlaying]);
 
   const episode = episodesList[currentEpisodeIndex];
 
@@ -53,6 +72,16 @@ export function Player() {
           <span>00:00</span>
         </div>
 
+        {episode && (
+          <audio
+            src={episode.url}
+            ref={audioRef}
+            autoPlay
+            onPlay={() => setPlayingState(true)}
+            onPause={() => setPlayingState(false)}
+          />
+        )}
+
         <div className={styled.buttons}>
           <button type="button" disabled={!episode}>
             <img src="/shuffle.svg" alt="Embaralhar" />
@@ -66,8 +95,13 @@ export function Player() {
             className={styled.playButton}
             type="button"
             disabled={!episode}
+            onClick={togglePlay}
           >
-            <img src="/play.svg" alt="Tocar" />
+            {isPlaying ? (
+              <img src="/pause.svg" alt="Pausar" />
+            ) : (
+              <img src="/play.svg" alt="Tocar" />
+            )}
           </button>
 
           <button type="button" disabled={!episode}>
