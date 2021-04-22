@@ -1,22 +1,25 @@
-import { AppProps } from 'next/app'
+import { AppProps } from "next/app";
 
-import { Header } from '../components/Header'
-import { Player } from '../components/Player'
+import { Header } from "../components/Header";
+import { Player } from "../components/Player";
+import { PlayerProvider } from "../contexts/PlayerContext";
 
-import styled from '../styles/app.module.scss'
-import '../styles/global.scss'
+import styled from "../styles/app.module.scss";
+import "../styles/global.scss";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <div className={styled.wrapper}>
-      <main>
-        <Header />
-        <Component {...pageProps} />
-      </main>
+    <PlayerProvider>
+      <div className={styled.wrapper}>
+        <main>
+          <Header />
+          <Component {...pageProps} />
+        </main>
 
-      <Player />
-    </div>
-  )
+        <Player />
+      </div>
+    </PlayerProvider>
+  );
 }
 
-export default MyApp
+export default MyApp;
