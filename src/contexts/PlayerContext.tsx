@@ -24,6 +24,7 @@ type PlayerContextData = {
   togglePlay: () => void;
   toggleLoop: () => void;
   toggleShuffle: () => void;
+  clearPlayerState: () => void;
 };
 
 interface PlayerContextProviderProps {
@@ -69,7 +70,12 @@ export function PlayerContextProvider({
     setIsPlaying(state);
   }
 
-  const hasNext = currentEpisodeIndex + 1 < episodesList.length;
+  function clearPlayerState() {
+    setEpisodesList([]);
+    setCurrentEpisodeIndex(0);
+  }
+
+  const hasNext = isShuffling || currentEpisodeIndex + 1 < episodesList.length;
   const hasPrevious = currentEpisodeIndex > 0;
 
   function playNext() {
@@ -78,8 +84,7 @@ export function PlayerContextProvider({
         Math.random() * episodesList.length
       ); // Always that you need a random number with max, u need to multiply ramdom by max them floor
       setCurrentEpisodeIndex(nextRandomEpisodeIndex);
-    }
-    if (hasNext) setCurrentEpisodeIndex(currentEpisodeIndex + 1);
+    } else if (hasNext) setCurrentEpisodeIndex(currentEpisodeIndex + 1);
   }
 
   function playPrevious() {
@@ -104,6 +109,7 @@ export function PlayerContextProvider({
         toggleLoop,
         toggleShuffle,
         setPlayingState,
+        clearPlayerState,
       }}
     >
       {children}
