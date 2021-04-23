@@ -12,12 +12,16 @@ type PlayerContextData = {
   episodesList: Episode[];
   currentEpisodeIndex: number;
   isPlaying: boolean;
+  isLooping: boolean;
+  hasPrevious: boolean;
+  hasNext: boolean;
   play: (episode: Episode) => void;
   playList: (list: Episode[], index: number) => void;
   playNext: () => void;
   playPrevious: () => void;
   setPlayingState: (state: boolean) => void;
   togglePlay: () => void;
+  toggleLoop: () => void;
 };
 
 interface PlayerContextProviderProps {
@@ -32,6 +36,7 @@ export function PlayerContextProvider({
   const [episodesList, setEpisodesList] = useState<Episode[]>([]);
   const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isLooping, setIsLooping] = useState(false);
 
   function play(episode: Episode) {
     setEpisodesList([episode]);
@@ -49,21 +54,23 @@ export function PlayerContextProvider({
     setIsPlaying(!isPlaying);
   }
 
+  function toggleLoop() {
+    setIsLooping(!isLooping);
+  }
+
   function setPlayingState(state) {
     setIsPlaying(state);
   }
 
-  function playNext() {
-    const nextEpisodeIndex = currentEpisodeIndex + 1;
+  const hasNext = currentEpisodeIndex + 1 < episodesList.length;
+  const hasPrevious = currentEpisodeIndex > 0;
 
-    if (nextEpisodeIndex < episodesList.length)
-      setCurrentEpisodeIndex(currentEpisodeIndex + 1);
+  function playNext() {
+    if (hasNext) setCurrentEpisodeIndex(currentEpisodeIndex + 1);
   }
 
   function playPrevious() {
-    const previousEpisode = currentEpisodeIndex - 1;
-
-    if (previousEpisode > 0) setCurrentEpisodeIndex(previousEpisode);
+    if (hasPrevious) setCurrentEpisodeIndex(currentEpisodeIndex - 1);
   }
 
   return (
@@ -72,11 +79,15 @@ export function PlayerContextProvider({
         episodesList,
         currentEpisodeIndex,
         isPlaying,
+        isLooping,
+        hasNext,
+        hasPrevious,
         play,
         playList,
         playNext,
         playPrevious,
         togglePlay,
+        toggleLoop,
         setPlayingState,
       }}
     >

@@ -29,8 +29,6 @@ type HomeProps = {
 export default function Home({ latestEpisodes, allEpisodes }: HomeProps) {
   const { playList } = usePlayer();
 
-  console.log(latestEpisodes);
-
   const episodesList = [...latestEpisodes, ...allEpisodes];
 
   return (
