@@ -1,4 +1,5 @@
 import { GetStaticPaths, GetStaticProps } from "next";
+import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { format, parseISO } from "date-fns";
@@ -32,37 +33,43 @@ export default function Episode({ episode }: EpisodeProps) {
   const { play } = usePlayer();
 
   return (
-    <div className={styled.episode}>
-      <div className={styled.thumbnailContainer}>
-        <button type="button" onClick={router.back}>
-          <img src="/arrow-left.svg" alt="Voltar" />
-        </button>
+    <>
+      <Head>
+        <title>{episode.title} | Podcastr</title>
+      </Head>
 
-        <Image
-          width={700}
-          height={160}
-          src={episode.thumbnail}
-          alt={episode.title}
-          objectFit="cover"
+      <div className={styled.episode}>
+        <div className={styled.thumbnailContainer}>
+          <button type="button" onClick={router.back}>
+            <img src="/arrow-left.svg" alt="Voltar" />
+          </button>
+
+          <Image
+            width={700}
+            height={160}
+            src={episode.thumbnail}
+            alt={episode.title}
+            objectFit="cover"
+          />
+
+          <button type="button" onClick={() => play(episode)}>
+            <img src="/play.svg" alt="Tocar episódio" />
+          </button>
+        </div>
+
+        <header>
+          <h1>{episode.members}</h1>
+          <span>{episode.members}</span>
+          <span>{episode.publishedAt}</span>
+          <span>{episode.durationAsString}</span>
+        </header>
+
+        <div
+          className={styled.description}
+          dangerouslySetInnerHTML={{ __html: episode.description }}
         />
-
-        <button type="button" onClick={() => play(episode)}>
-          <img src="/play.svg" alt="Tocar episódio" />
-        </button>
       </div>
-
-      <header>
-        <h1>{episode.members}</h1>
-        <span>{episode.members}</span>
-        <span>{episode.publishedAt}</span>
-        <span>{episode.durationAsString}</span>
-      </header>
-
-      <div
-        className={styled.description}
-        dangerouslySetInnerHTML={{ __html: episode.description }}
-      />
-    </div>
+    </>
   );
 }
 
