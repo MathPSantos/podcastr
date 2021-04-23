@@ -15,10 +15,12 @@ export function Player() {
     currentEpisodeIndex,
     isPlaying,
     isLooping,
+    isShuffling,
     hasNext,
     hasPrevious,
     togglePlay,
     toggleLoop,
+    toggleShuffle,
     setPlayingState,
     playNext,
     playPrevious,
@@ -90,7 +92,12 @@ export function Player() {
         )}
 
         <div className={styled.buttons}>
-          <button type="button" disabled={!episode}>
+          <button
+            type="button"
+            disabled={!episode || episodesList.length === 1}
+            onClick={toggleShuffle}
+            className={isShuffling && styled.isActive}
+          >
             <img src="/shuffle.svg" alt="Embaralhar" />
           </button>
 
